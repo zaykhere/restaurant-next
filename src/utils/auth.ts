@@ -8,7 +8,7 @@ export function signJwt(payload: object) {
 
 export function verifyJwt(token: string) {
   try {
-    return jwt.verify(token, JWT_SECRET);
+    return jwt.verify(token, JWT_SECRET) as {id: string, email: string, role: boolean};
   } catch {
     return null;
   }
