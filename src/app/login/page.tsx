@@ -1,5 +1,7 @@
 'use client';
 
+import { API } from '@/utils/axios';
+import Link from 'next/link';
 import { useState } from 'react';
 import toast from 'react-hot-toast';
 import { z } from 'zod';
@@ -28,17 +30,11 @@ export default function LoginPage() {
 
     setLoading(true);
     try {
-      const res = await fetch('/api/auth/login', {
-        method: 'POST',
-        body: JSON.stringify(form),
-        headers: {
-          'Content-Type': 'application/json',
-        },
-      });
+      const res = await API.post('/auth/login', form);
 
-      const data = await res.json();
+      const data = res.data;
 
-      if (!res.ok) {
+      if (!data.token) {
         throw new Error(data.error || 'Login failed');
       }
 
@@ -88,9 +84,9 @@ export default function LoginPage() {
 
         <p className="text-sm text-center">
           Don't have an account?{' '}
-          <a href="/register" className="text-red-600 underline">
+          <Link href="/register" className="text-red-600 underline">
             Register
-          </a>
+          </Link>
         </p>
       </form>
     </div>

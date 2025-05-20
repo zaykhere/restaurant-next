@@ -1,5 +1,7 @@
 'use client';
 
+import { API } from '@/utils/axios';
+import Link from 'next/link';
 import { useState } from 'react';
 import toast from 'react-hot-toast';
 import { z } from 'zod';
@@ -28,24 +30,19 @@ export default function RegisterPage() {
 
     setLoading(true);
     try {
-      const res = await fetch('/api/auth/register', {
-        method: 'POST',
-        body: JSON.stringify(form),
-        headers: {
-          'Content-Type': 'application/json',
-        },
-      });
+      const res = await API.post('/auth/register', form);
 
-      const data = await res.json();
+      const data = res.data
 
-      if (!res.ok) {
-        throw new Error(data.error || 'Login failed');
+      if (!data) {
+        throw new Error(data.error || 'Registration failed');
       }
 
       toast.success('Registration successful');
       // Redirect user to dashboard, etc.
     } catch (err: any) {
-      toast.error(err.message || 'Something went wrong');
+      console.log({err})
+      toast.error(err?.response?.data?.error || err?.message || 'Something went wrong');
     } finally {
       setLoading(false);
     }
@@ -86,15 +83,16 @@ export default function RegisterPage() {
         <button
           type="submit"
           className="w-full bg-red-500 text-white py-2 rounded hover:bg-red-600 transition"
+          disabled={loading}
         >
           Register
         </button>
 
         <p className="text-sm text-center">
           Already have an account?{' '}
-          <a href="/login" className="text-red-600 underline">
+          <Link href="/login" className="text-red-600 underline">
             Login
-          </a>
+          </Link>
         </p>
       </form>
     </div>
