@@ -6,6 +6,7 @@ import { API } from "@/utils/axios";
 import { useQuery } from "@tanstack/react-query";
 import React from "react";
 import toast from "react-hot-toast";
+import Image from "next/image";
 
 const OrdersPage = () => {
   const {isLoading, error, data} = useQuery({
@@ -25,6 +26,8 @@ const OrdersPage = () => {
     return null;
   }
 
+  const isAdmin = true;
+
   return (
     <div className="p-4 lg:px-20 xl:px-40">
       <table className="w-full border-separate border-spacing-3">
@@ -43,8 +46,22 @@ const OrdersPage = () => {
               <td className="hidden md:block py-6 px-1">{order.id}</td>
               <td className="py-6 px-1">{new Date(order.createdAt).toDateString()}</td>
               <td className="py-6 px-1">{order.price}</td>
-              <td className="hidden md:block py-6 px-1">Big Burger Menu (2), Veggie Pizza (2), Coca Cola 1L (2)</td>
-              <td className="py-6 px-1">On the way (approx. 10min)...</td>
+              <td className="hidden md:block py-6 px-1">
+                {order.products?.[0]?.title}
+              </td>
+              {isAdmin ? (
+                <td>
+                  <form className="flex items-center justify-center gap-4">
+                    <input placeholder={order.status} className="p-2 ring-1 ring-red-100 rounded-md" />
+                    <button className="bg-red-400 p-2 rounded-full">
+                      <Image src="/edit.png" alt="Edit status" width={20} height={20} />
+                    </button>
+                  </form>
+                </td>
+              ) : (
+                <td className="py-6 px-1">{order.status}</td>
+              )}
+              
             </tr>
           ))}
           
